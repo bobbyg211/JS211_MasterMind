@@ -1,5 +1,7 @@
 'use strict';
 
+var colors = require('colors/safe');
+
 const assert = require('assert');
 const readline = require('readline');
 const rl = readline.createInterface({
@@ -28,13 +30,54 @@ const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-const generateHint = () =>  {
+const generateHint = (guess) =>  {
   // your code here
+  let guessArray = guess.split("");
+  let solutionArray = solution.split("");
+  let correctLetterLocations = 0;
+  let correctLetters = 0;
+  let usedLetters = [];
+
+  for (let i = 0; i < solutionArray.length; i++) {
+    if(solutionArray[i] === guessArray[i]) {
+      solutionArray[i] = null;
+      correctLetterLocations++;
+    }
+  }
+
+  for (let i = 0; i < solutionArray.length; i++) {
+    let targetIndex = solutionArray.indexOf(guessArray[i]);
+    if(targetIndex > -1 && !(usedLetters.includes(guessArray[i]))) {
+      solutionArray[targetIndex] = null;
+      correctLetters++;
+
+      usedLetters.push(guessArray[i]);
+    }
+  }
+
+  let hint = colors.red(correctLetterLocations) + "-" + correctLetters;
+  let hintGuess = guess + " / " + hint;
+  board.push(hintGuess);
+
+  if (board.length === 10) {
+    console.log('You ran out of turns! The solution was ' + colors.green(solution) + ".");
+  } else {
+    console.log('Guess again.')
+  }
+
+  return correctLetterLocations + "-" + correctLetters;
+
 }
 
 const mastermind = (guess) => {
   solution = 'abcd'; // Comment this out to generate a random solution
   // your code here
+  if (guess === solution) {
+    console.log('You guessed it!');
+    return 'You guessed it!';
+  } else {
+    generateHint(guess);
+  }
 }
 
 
